@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: co-op-quest-log
+    runtime: static
+    staticPublishPath: .
+    buildCommand: ""
+    headers:
+      - path: /*
+        name: Cache-Control
+        value: no-cache
+
