@@ -3,21 +3,82 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Co-Op Quest Log</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Indie+Flower&family=Press+Start+2P&family=Caveat:wght@400;700&display=swap" rel="stylesheet">
+    <title>Our Co-Op Log Book</title>
     <style>
 
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
         body {
-            font-family: 'Caveat', 'Indie Flower', cursive;
+            font-family: 'Segoe Print', 'Trebuchet MS', cursive;
             display: flex; justify-content: center; align-items: center;
             height: 100vh; overflow: hidden; color: #3a2a1a;
             background: #d4c5a9;
             background-image:
                 url("data:image/svg+xml,%3Csvg width='100' height='100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='0.65' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100' height='100' filter='url(%23n)' opacity='0.08'/%3E%3C/svg%3E");
+        }
+
+        #app-shell {
+            position: relative; z-index: 1;
+            width: 95%; max-width: 720px;
+            display: flex; gap: 12px; align-items: stretch;
+        }
+
+        #timeline-strip {
+            width: 172px; min-height: 660px;
+            background: rgba(245, 237, 214, 0.9);
+            border-radius: 6px;
+            border: 1px dashed rgba(120, 100, 70, 0.28);
+            box-shadow: 2px 2px 0 #c4b896;
+            padding: 18px 10px 18px 18px;
+            position: relative;
+        }
+        #timeline-strip::before {
+            content: '';
+            position: absolute;
+            top: 56px; bottom: 20px; left: 16px;
+            width: 2px; background: rgba(120, 100, 70, 0.25);
+        }
+        .tl-heading {
+            font-family: 'Consolas', 'Courier New', monospace;
+            font-size: 9px; letter-spacing: 1px;
+            color: #8a7560; margin-bottom: 14px;
+            padding-left: 14px;
+        }
+        .tl-item {
+            position: relative;
+            padding: 0 0 8px 30px;
+            margin-bottom: 6px;
+            opacity: 0.56;
+            cursor: pointer;
+            transition: opacity 0.2s, transform 0.2s;
+        }
+        .tl-item::before {
+            content: '';
+            position: absolute;
+            left: -3px; top: 6px;
+            width: 8px; height: 8px;
+            border-radius: 50%;
+            background: #b9a689;
+            border: 1px solid rgba(0,0,0,0.12);
+        }
+        .tl-item:hover { opacity: 0.82; transform: translateX(1px); }
+        .tl-item.active { opacity: 1; }
+        .tl-item.active::before {
+            background: #c0392b;
+            box-shadow: 0 0 0 5px rgba(192,57,43,0.15);
+        }
+        .tl-item.completed { opacity: 0.82; }
+        .tl-date {
+            font-family: 'Consolas', 'Courier New', monospace;
+            font-size: 9px;
+            color: #9a8770;
+            letter-spacing: 0.4px;
+            line-height: 1.1;
+        }
+        .tl-label {
+            font-size: 14px;
+            line-height: 1.15;
+            color: #4a3728;
         }
 
         /* ── animated star field (dimmed for scrapbook) ── */
@@ -37,7 +98,7 @@
         /* ── journal / scrapbook ── */
         #journal {
             position: relative; z-index: 1;
-            width: 95%; max-width: 460px; min-height: 660px;
+            width: 100%; max-width: 536px; min-height: 660px;
             background: #f5edd6;
             background-image:
                 repeating-linear-gradient(0deg, transparent, transparent 27px, rgba(180,160,120,0.15) 27px, rgba(180,160,120,0.15) 28px);
@@ -48,6 +109,15 @@
                 8px 8px 0 #b0a07a,
                 0 12px 40px rgba(0,0,0,0.2);
             overflow: hidden;
+        }
+
+        @media (max-width: 760px) {
+            #app-shell { gap: 8px; }
+            #timeline-strip {
+                width: 128px;
+                padding: 14px 8px 12px 12px;
+            }
+            .tl-label { font-size: 12px; }
         }
         /* coffee stain watermark */
         #journal::before {
@@ -92,7 +162,7 @@
 
         /* ── typography ── */
         h2 {
-            font-family: 'Caveat', cursive; font-weight: 700;
+            font-family: 'Segoe Print', 'Trebuchet MS', cursive; font-weight: 700;
             font-size: 30px; margin-bottom: 10px;
             color: #c0392b;
             text-shadow: 1px 1px 0 rgba(255,255,255,0.5);
@@ -104,7 +174,7 @@
         }
         em { color: #c0392b; font-style: normal; text-decoration: underline wavy #e8927c; }
         .subtitle {
-            font-family: 'Press Start 2P', cursive; font-size: 8px;
+            font-family: 'Consolas', 'Courier New', monospace; font-size: 8px;
             letter-spacing: 1.5px; color: #a0896e;
             margin-bottom: 14px;
             background: rgba(255,255,255,0.3); padding: 4px 12px;
@@ -124,7 +194,7 @@
         .btn {
             margin-top: 20px; padding: 12px 30px;
             background: #fff; border: 2px dashed #c0392b;
-            color: #c0392b; font-family: 'Caveat', cursive;
+            color: #c0392b; font-family: 'Segoe Print', 'Trebuchet MS', cursive;
             font-size: 18px; font-weight: 700; cursor: pointer;
             border-radius: 4px; transition: .25s;
             text-transform: uppercase; letter-spacing: 1px;
@@ -146,7 +216,7 @@
 
         /* ── counter chip ── */
         .counter-chip {
-            font-family: 'Press Start 2P', cursive; font-size: 9px;
+            font-family: 'Consolas', 'Courier New', monospace; font-size: 9px;
             color: #8a7560; background: rgba(255,255,255,.5);
             padding: 6px 14px; border-radius: 20px; margin: 8px 0 14px;
             border: 1px dashed rgba(0,0,0,.12);
@@ -215,7 +285,7 @@
         /* oops message */
         .oops-msg {
             position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
-            font-family: 'Press Start 2P', cursive; font-size: 10px;
+            font-family: 'Consolas', 'Courier New', monospace; font-size: 10px;
             color: #e74c3c; background: rgba(255,255,255,0.92);
             padding: 10px 18px; border-radius: 6px; z-index: 20;
             border: 2px dashed #e74c3c;
@@ -835,7 +905,7 @@
             background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 0L60 30L30 60L0 30z' fill='rgba(255,255,255,0.04)'/%3E%3C/svg%3E");
         }
         .champion-text {
-            font-family: 'Press Start 2P', cursive; font-size: 11px;
+            font-family: 'Consolas', 'Courier New', monospace; font-size: 11px;
             color: #c0392b; margin-bottom: 16px; letter-spacing: 2px;
             text-shadow: 0 0 15px rgba(192,57,43,.3);
             animation: glowPulse 2s ease-in-out infinite;
@@ -866,6 +936,47 @@
             transform: rotate(0.5deg);
         }
         .achievement-card .emoji-row { font-size: 64px; transform: rotate(0deg); }
+
+        .poem-card {
+            width: 90%; max-width: 360px;
+            text-align: left;
+            margin: 14px auto 0;
+            padding: 14px 16px;
+            background: rgba(255, 255, 255, 0.58);
+            border: 2px dashed #c4b896;
+            border-radius: 6px;
+            box-shadow: inset 0 2px 6px rgba(0,0,0,0.06);
+        }
+        .poem-card p {
+            font-size: 18px;
+            line-height: 1.45;
+            margin: 0;
+            white-space: pre-line;
+        }
+
+        .memory-photo {
+            width: 90%;
+            max-width: 330px;
+            background: #fff;
+            border-radius: 6px;
+            padding: 10px 10px 18px;
+            border: 1px solid rgba(0,0,0,0.08);
+            box-shadow: 3px 3px 10px rgba(0,0,0,0.12);
+            transform: rotate(-1deg);
+            margin-top: 10px;
+        }
+        .memory-photo img {
+            width: 100%;
+            height: 290px;
+            object-fit: cover;
+            border-radius: 4px;
+            display: block;
+        }
+        .memory-photo figcaption {
+            margin-top: 10px;
+            font-size: 17px;
+            color: #6a5644;
+        }
 
         /* ── heart float on final ── */
         .heart-float {
@@ -1074,6 +1185,22 @@
 
 <div id="progress-wrap"><div id="progress-bar"></div></div>
 
+<div id="app-shell">
+    <aside id="timeline-strip" aria-label="Our timeline">
+        <div class="tl-heading">OUR TIMELINE</div>
+        <div class="tl-item active" data-page="0"><div class="tl-date">9 Mar</div><div class="tl-label">We Matched</div></div>
+        <div class="tl-item" data-page="1"><div class="tl-date">21 Mar</div><div class="tl-label">First Time We Met</div></div>
+        <div class="tl-item" data-page="2"><div class="tl-date">24 Mar</div><div class="tl-label">Mercedes Hunt</div></div>
+        <div class="tl-item" data-page="3"><div class="tl-date">27 Mar</div><div class="tl-label">Lobby Nights</div></div>
+        <div class="tl-item" data-page="4"><div class="tl-date">28 Mar</div><div class="tl-label">First Meal She Cooked</div></div>
+        <div class="tl-item" data-page="5"><div class="tl-date">31 Mar</div><div class="tl-label">Minecraft Home</div></div>
+        <div class="tl-item" data-page="6"><div class="tl-date">2 Apr</div><div class="tl-label">Jam Session</div></div>
+        <div class="tl-item" data-page="7"><div class="tl-date">3 Apr</div><div class="tl-label">Chair Build</div></div>
+        <div class="tl-item" data-page="8"><div class="tl-date">4 Apr</div><div class="tl-label">IMG_3131.jpg</div></div>
+        <div class="tl-item" data-page="9"><div class="tl-date">6 Apr</div><div class="tl-label">Little Letter</div></div>
+        <div class="tl-item" data-page="10"><div class="tl-date">8 Apr</div><div class="tl-label">She Said Yes</div></div>
+    </aside>
+
 <div id="journal">
     <div id="sleep-overlay"></div>
 
@@ -1124,32 +1251,32 @@
     <div id="p1" class="page">
         <div class="tape tape-top"></div>
         <div class="sticker" style="top:10px;left:10px;transform:rotate(-15deg);">&#x2728;</div>
-        <div class="subtitle">CHAPTER I</div>
-        <h2>Quest Log: The Beginning</h2>
+        <div class="subtitle">LOG ENTRY 01</div>
+        <h2>How Our Story Started</h2>
         <div class="emoji-row">&#x1F3F4;&#xE0067;&#xE0062;&#xE0073;&#xE0063;&#xE0074;&#xE007F; &#x1F4DE; &#x1F3E0;</div>
-        <p>First week. You in Scotland. Me here.</p>
-        <p>A long-distance start... but the connection was <em>always</em> full bars.</p>
-        <button class="btn" onclick="next(2)">Accept Quest &#x25B8;</button>
-        <div class="page-num">1 / 9</div>
+        <p>From one swipe on Hinge to a full co-op storyline.</p>
+        <p>Long distance at first, but we still felt <em>right there</em> together.</p>
+        <button class="btn" onclick="next(2)">Open Next Entry &#x25B8;</button>
+        <div class="page-num">1 / 11</div>
     </div>
 
     <!-- ═══ PAGE 2: Mercedes ═══ -->
     <div id="p2" class="page">
         <div class="tape tape-corner"></div>
-        <div class="subtitle">CHAPTER II</div>
-        <h2>"I-Spy: Highway Hunt"</h2>
-        <p>Tap the 5 <strong>black</strong> Mercedes! <em>Watch out for blue ones...</em></p>
+        <div class="subtitle">LOG ENTRY 02</div>
+        <h2>Our Running Car Joke</h2>
+        <p>Tap the 5 <strong>black</strong> Mercedes. <em>One blue decoy might try to fool you.</em></p>
         <div class="counter-chip" id="merc-count">Found: 0 / 5</div>
         <div class="merc-map" id="road"></div>
-        <div class="page-num">2 / 9</div>
+        <div class="page-num">2 / 11</div>
     </div>
 
     <!-- ═══ PAGE 3: Lethal Company ═══ -->
     <div id="p3" class="page">
         <div class="tape tape-top"></div>
-        <div class="subtitle">CHAPTER III</div>
-        <h2>"Meet the Quota"</h2>
-        <p>Use <strong>WASD</strong> to move. Collect scrap. Avoid the Bracken.</p>
+        <div class="subtitle">LOG ENTRY 03</div>
+        <h2>Never A Boring Lobby</h2>
+        <p>Use <strong>WASD</strong> to move. Grab scrap and avoid the Bracken.</p>
         <div class="counter-chip" id="lethal-score" style="font-size:8px;">PROFIT QUOTA: $0 / $150</div>
         <div class="company-zone" id="quota-zone">
             <div class="lc-hud" id="lc-hud">
@@ -1163,27 +1290,41 @@
             <div class="scan-line"></div>
             <div class="lc-stamp">// PROPERTY OF THE COMPANY //</div>
         </div>
-        <div class="page-num">3 / 9</div>
+        <div class="page-num">3 / 11</div>
     </div>
 
-    <!-- ═══ PAGE 4: Minecraft / Ars Nouveau ═══ -->
+    <!-- ═══ PAGE 4: Meal Memory ═══ -->
     <div id="p4" class="page">
+        <div class="tape tape-top"></div>
+        <div class="subtitle">LOG ENTRY 04</div>
+        <h2>Your First Meal For Me</h2>
+        <p>This was such a special one - your first meal you cooked for me.</p>
+        <figure class="memory-photo">
+            <img src="20260328_221347.jpg" alt="First meal she cooked for me on 28 March" loading="lazy">
+            <figcaption>20260328_221347.jpg - 28 March</figcaption>
+        </figure>
+        <button class="btn" onclick="next(5)">Open Next Entry &#x25B8;</button>
+        <div class="page-num">4 / 11</div>
+    </div>
+
+    <!-- ═══ PAGE 5: Minecraft / Ars Nouveau ═══ -->
+    <div id="p5" class="page">
         <div class="tape tape-corner"></div>
-        <div class="subtitle">CHAPTER IV</div>
-        <h2>"Enchant Our Home" &#x2728;</h2>
-        <p>Decorate freely — but place two beds side by side to complete it &#x1F6CF;&#xFE0F;</p>
+        <div class="subtitle">LOG ENTRY 05</div>
+        <h2>Our Minecraft Build Dreams &#x2728;</h2>
+        <p>Use spruce vibes and arcane style. Place two beds side by side to complete it &#x1F6CF;&#xFE0F;</p>
         <div class="mc-palette" id="mc-palette"></div>
         <div class="counter-chip" id="mc-counter">Place two beds together &#x2764;&#xFE0F;</div>
         <div class="mc-grid" id="mc-grid"></div>
-        <div class="page-num">4 / 9</div>
+        <div class="page-num">5 / 11</div>
     </div>
 
-    <!-- ═══ PAGE 5: Music ═══ -->
-    <div id="p5" class="page">
+    <!-- ═══ PAGE 6: Music ═══ -->
+    <div id="p6" class="page">
         <div class="tape tape-top"></div>
         <div class="sticker" style="bottom:40px;right:10px;transform:rotate(12deg);">&#x1F3B5;</div>
-        <div class="subtitle">CHAPTER V</div>
-        <h2>"Play Our Song" &#x1F3B9;</h2>
+        <div class="subtitle">LOG ENTRY 06</div>
+        <h2>Late Night Jam Session &#x1F3B9;</h2>
         <p>Follow the glowing keys to play the melody...</p>
         <div class="music-stage" id="music-stage">
             <div class="eq-wrap" id="eq-wrap"></div>
@@ -1195,50 +1336,89 @@
             </div>
         </div>
         <p id="jam-msg"></p>
-        <div class="page-num">5 / 9</div>
+        <div class="page-num">6 / 11</div>
     </div>
 
-    <!-- ═══ PAGE 6: Chair Building ═══ -->
-    <div id="p6" class="page">
+    <!-- ═══ PAGE 7: Chair Building ═══ -->
+    <div id="p7" class="page">
         <div class="tape tape-corner"></div>
-        <div class="subtitle">CHAPTER VI</div>
-        <h2>"Some Assembly Required" &#x1FA91;</h2>
-        <p>We built a chair with friends. Now it's your turn!</p>
+        <div class="subtitle">LOG ENTRY 07</div>
+        <h2>The Chair Build Night &#x1FA91;</h2>
+        <p>One of our latest memories: building a chair together with friends.</p>
         <div class="chair-parts" id="chair-parts"></div>
         <div class="chair-zone" id="chair-zone">
             <div class="chair-assembly" id="chair-assembly"></div>
         </div>
-        <div class="page-num">6 / 9</div>
+        <div class="page-num">7 / 11</div>
     </div>
 
-    <!-- ═══ PAGE 7: FaceTime / Sleep ═══ -->
-    <div id="p7" class="page">
-        <div class="tape tape-corner"></div>
-        <div class="emoji-row">&#x1F4F1;&#x1F49C;</div>
-        <h2>Late Night FaceTimes</h2>
-        <p>My favourite part of the day is falling asleep with you every single night.</p>
-        <p>Even when we're silent, it's everything.</p>
-        <button class="btn" onclick="startSleepAnim()">Goodnight... &#x1F319;</button>
-        <div class="page-num">7 / 9</div>
-    </div>
-
-    <!-- ═══ PAGE 8: The Question ═══ -->
+    <!-- ═══ PAGE 8: Photo Memory ═══ -->
     <div id="p8" class="page">
         <div class="tape tape-top"></div>
-        <div class="champion-text">&#x2605; CHAMPION SQUAD FOUND &#x2605;</div>
+        <div class="subtitle">LOG ENTRY 08</div>
+        <h2>One Of My Favourite Photos</h2>
+        <p>This deserved its own page in our logbook.</p>
+        <figure class="memory-photo">
+            <img src="IMG_3131.jpg" alt="Photo memory from 4 April" loading="lazy">
+            <figcaption>IMG_3131.jpg - 4 April</figcaption>
+        </figure>
+        <button class="btn" onclick="next(9)">Keep Reading &#x25B8;</button>
+        <div class="page-num">8 / 11</div>
+    </div>
+
+    <!-- ═══ PAGE 9: Letter Intro ═══ -->
+    <div id="p9" class="page">
+        <div class="tape tape-corner"></div>
+        <div class="emoji-row">&#x1F4D3;&#x1F49C;</div>
+        <h2>A Little Letter For You</h2>
+        <p>This one stays in our logbook forever.</p>
+        <div class="poem-card">
+            <p>"And after a little while,
+player one gained a player two.
+
+I'll be your player two,
+my darling Roo."</p>
+        </div>
+        <button class="btn" onclick="next(10)">Read The Full Letter &#x25B8;</button>
+        <div class="page-num">9 / 11</div>
+    </div>
+
+    <!-- ═══ PAGE 10: The Letter ═══ -->
+    <div id="p10" class="page">
+        <div class="tape tape-top"></div>
+        <div class="champion-text">&#x2605; OUR LOGBOOK LETTER &#x2605;</div>
         <div class="apex-banner">
-            <h2 style="margin:10px 0;font-size:22px;color:#fff;font-family:'Caveat';filter:none;">
-                WILL YOU BE MY GIRLFRIEND?
+            <h2 style="margin:10px 0;font-size:22px;color:#fff;font-family:'Segoe Print','Trebuchet MS',cursive;filter:none;">
+                My Darling Roo
             </h2>
-            <p style="font-size:15px;color:#eee;text-align:left;">Quest: "Permanent Player 2"</p>
-            <p style="font-size:13px;color:rgba(255,255,255,.55);text-align:left;margin-top:2px;">Reward: Unlimited co-op adventures</p>
+            <p style="font-size:15px;color:#eee;text-align:left;">A poem and a promise for our future.</p>
+            <p style="font-size:13px;color:rgba(255,255,255,.75);text-align:left;margin-top:6px;line-height:1.45;white-space:pre-line;">My Darling Roo
+My Roo was named after Winnie the Pooh,
+His long hair and glorious beard,
+Gained him a new name in cheers,
+"Jesus!" people yell, as they kneel and pray
+You're probably sick of it at the end of the day.
+But at the end of a day, be it easy or hard,
+I'll be waiting for you with open arms.
+A cuddle from you solves all the sickness and woes,
+And after just one swipe from hinge you chose,
+You chose me and I chose you,
+And after a little while, player one gained a player two.
+I'll be your player two my darling Roo.
+And player one, is a task for you.
+Although it's important to remember our titles don't reflect our skill,
+That is a black Mercedes, my skills give you chills,
+For I'll win and overcome you in any game,
+As for now, I want none of this to change.
+So here's to our future, a fun and long one,
+Gamers by night, by day, a dad and a mum. X</p>
         </div>
         <div style="display:flex;gap:16px;margin-top:24px;position:relative;">
-            <button class="btn btn-primary" onclick="final()">YES &#x2764;&#xFE0F;</button>
-            <button class="btn btn-ghost" id="no-btn" onclick="nope(this)" onmouseover="dodgeNo(this)" ontouchstart="dodgeNo(this)">NO</button>
+            <button class="btn btn-primary" onclick="final()">Seal This Entry &#x2764;&#xFE0F;</button>
         </div>
-        <div class="page-num">8 / 9</div>
+        <div class="page-num">10 / 11</div>
     </div>
+</div>
 </div>
 
 <script>
@@ -1426,7 +1606,7 @@ function mercBlueSVG() {
 
 /* ── globals ── */
 let score = 0, pno = false, gtr = false, currentPage = 0;
-const totalPages = 9; // pages 0-8
+const totalPages = 11; // pages 0-10
 
 /* ── star canvas ── */
 (function initStars() {
@@ -1449,21 +1629,38 @@ const totalPages = 9; // pages 0-8
 /* ── page navigation ── */
 function setProgress(page) {
     document.getElementById('progress-bar').style.width = ((page/(totalPages-1))*100)+'%';
+    setTimeline(page);
+}
+
+function setTimeline(page) {
+    document.querySelectorAll('.tl-item').forEach(item => {
+        const p = Number(item.dataset.page);
+        item.classList.toggle('active', p === page);
+        item.classList.toggle('completed', p < page);
+    });
 }
 
 function next(n) {
     currentPage = n;
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-    document.getElementById('p'+n).classList.add('active');
+    const targetPage = document.getElementById('p'+n);
+    if (!targetPage) return;
+    targetPage.classList.add('active');
     setProgress(n);
 
     if(n===2) spawnMercs();
     if(n===3) spawnLethal();
-    if(n===4) spawnMinecraft();
-    if(n===5) spawnMusicLevel();
-    if(n===6) spawnChair();
+    if(n===5) spawnMinecraft();
+    if(n===6) spawnMusicLevel();
+    if(n===7) spawnChair();
 }
 setProgress(0);
+
+document.querySelectorAll('.tl-item').forEach(item => {
+    item.addEventListener('click', () => {
+        next(Number(item.dataset.page));
+    });
+});
 
 // start origin story intro on load
 setTimeout(startOriginStory, 600);
@@ -2142,7 +2339,7 @@ function spawnMinecraft() {
             document.getElementById('mc-counter').innerHTML = '\u{1F6CF}\uFE0F Home is where we sleep side by side \u2764\uFE0F';
             setTimeout(() => {
                 grid.classList.add('enchanted');
-                setTimeout(() => next(5), 2200);
+                setTimeout(() => next(6), 2200);
             }, 500);
         }
     }
@@ -2287,7 +2484,7 @@ function spawnChair() {
             if (placed >= 5) {
                 // all pieces placed!
                 assembly.classList.add('complete');
-                setTimeout(() => next(7), 1800);
+                setTimeout(() => next(8), 1800);
             }
         };
         parts.appendChild(btn);
@@ -2527,7 +2724,7 @@ function guitarFinale() {
     // advance to next page
     setTimeout(() => {
         if (eqAnimId) clearTimeout(eqAnimId);
-        next(6);
+        next(7);
     }, 4200);
 }
 
@@ -2565,7 +2762,7 @@ function startSleepAnim() {
 
     setTimeout(()=>{
         overlay.style.background = 'rgba(0,0,0,0)';
-        next(8);
+        next(10);
     }, 7000);
 }
 
@@ -2618,19 +2815,19 @@ function final() {
     document.getElementById('journal').innerHTML =
         '<div class="page active">' +
             '<div class="achievement-card">' +
-                '<div style="font-family:\'Press Start 2P\';font-size:8px;color:#a0896e;margin-bottom:12px;">ACHIEVEMENT UNLOCKED</div>' +
-                '<h2 style="font-size:28px;">\u2764\uFE0F Player 2 Joined \u2764\uFE0F</h2>' +
+                '<div style="font-family:Consolas,Courier New,monospace;font-size:8px;color:#a0896e;margin-bottom:12px;">ENTRY SAVED</div>' +
+                '<h2 style="font-size:28px;">\u2764\uFE0F The Logbook Continues \u2764\uFE0F</h2>' +
                 '<p style="' +
                     'width:88%;max-width:340px;margin:14px auto 10px;' +
-                    'font-family:Caveat,cursive;font-size:21px;color:#3a2a1a;' +
+                    'font-family:Segoe Print,Trebuchet MS,cursive;font-size:20px;color:#3a2a1a;' +
                     'background:rgba(255,255,255,0.45);border:2px dashed #c4b896;border-radius:6px;' +
                     'padding:14px 16px;line-height:1.5;text-align:left;' +
                     'box-shadow:inset 0 2px 6px rgba(0,0,0,0.06);' +
                 '">' +
-                    'I am so excited for our journey together, having lots and lots of adventures. Spending time together and doing fun things' +
-                    'but also having plenty of nights in. Anna I love everything about you, I love spending time with you, I love hearing you sing, ' +
-                    'I love playing games with you, I love all the calls we have, I love the games we play together. Most importantly I love you, ' +
-                    'and I will love you forever ??' +
+                    'So here is to our future, a fun and long one.\n\n' +
+                    'Gamers by night, and by day building a home and life together.\n\n' +
+                    'Thank you for choosing me after one little swipe.\n\n' +
+                    'I choose you, always. x' +
                 '</p>' +
             '</div>' +
         '</div>';
@@ -2641,7 +2838,7 @@ function final() {
         document.getElementById('journal').appendChild(h);
         setTimeout(()=>h.remove(), 4200);
     }, 600);
-    setProgress(8);
+    setProgress(10);
 }
 
 function spawnConfetti() {
